@@ -1,6 +1,6 @@
 const Commando = require('discord.js-commando');
 
-const settings = require('./settings.json');
+const settings = require('../settings.json');
 
 const client = new Commando.Client({
    commandPrefix: settings.prefix,
