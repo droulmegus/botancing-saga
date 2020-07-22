@@ -15,7 +15,9 @@ module.exports = class BasicTextCommand extends Command {
                message.reply(text, {
                   files:
                      id === texts.length - 1
-                        ? files.map((file) => path.resolve(__dirname, file))
+                        ? files.map((file) =>
+                             path.resolve(__dirname, 'botancing-saga', file)
+                          )
                         : undefined,
                })
             );
