@@ -1,4 +1,5 @@
 const { Command } = require('discord.js-commando');
+const path = require('path');
 
 module.exports = class BasicImageCommand extends Command {
    files = [];

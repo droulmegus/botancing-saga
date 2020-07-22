@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const paths = require('../paths');
+const path = require('path');
 
 module.exports = class BasicTextCommand extends Command {
    texts = [];
@@ -15,7 +15,7 @@ module.exports = class BasicTextCommand extends Command {
                message.reply(text, {
                   files:
                      id === texts.length - 1
-                        ? files.map((file) => paths.resolve(__dirname, file))
+                        ? files.map((file) => path.resolve(__dirname, file))
                         : undefined,
                })
             );
