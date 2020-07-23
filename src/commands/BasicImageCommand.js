@@ -8,7 +8,7 @@ module.exports = class BasicImageCommand extends Command {
       message.author = null;
       return message.channel.send({
          files: this.files.map((file) =>
-            path.resolve(__dirname, paths.relativeImgFolder, file)
+            path.resolve(paths.relativeImgFolder, file)
          ),
       });
    }

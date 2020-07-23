@@ -17,11 +17,7 @@ module.exports = class BasicTextCommand extends Command {
                   files:
                      id === texts.length - 1
                         ? files.map((file) =>
-                             path.resolve(
-                                __dirname,
-                                paths.relativeImgFolder,
-                                file
-                             )
+                             path.resolve(paths.relativeImgFolder, file)
                           )
                         : undefined,
                })
