@@ -16,5 +16,5 @@ module.exports = class HeritageCommand extends BasicTextCommand {
       `Une fois la compétences désirée apprise, il est possible de la transférer au style principal de ce même perso. Pour cela, il faut aller dans la composition d'équipe, et cliquer sur le gros "+", juste en-dessous du stuff`,
    ];
 
-   files = ['src/img/heritage-plus.png'];
+   files = ['heritage-plus.png'];
 };

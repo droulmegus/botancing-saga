@@ -10,5 +10,5 @@ module.exports = class VeriteCommand extends BasicImageCommand {
          description: 'La vérité.',
       });
    }
-   files = ['src/img/verite.png'];
+   files = ['verite.png'];
 };
