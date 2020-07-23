@@ -16,9 +16,7 @@ module.exports = class BasicTextCommand extends Command {
                message.reply(text, {
                   files:
                      id === texts.length - 1
-                        ? files.map((file) =>
-                             path.resolve(paths.relativeImgFolder, file)
-                          )
+                        ? files.map((file) => paths.relativeImgFolder + file)
                         : undefined,
                })
             );
