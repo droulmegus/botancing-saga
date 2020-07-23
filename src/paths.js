@@ -1,6 +1,6 @@
 module.exports = {
    google: {
       credentials: './credentials.json',
-      tokens: './tokens.json',
    },
+   relativeImgFolder: '/botancing-saga/src/img',
 };
