@@ -1,7 +1,7 @@
-const { Command } = require('discord.js-commando');
+const BasicCommand = require('./BasicCommand');
 const settings = require('../../../settings.json');
 
-module.exports = class BasicTextCommand extends Command {
+module.exports = class BasicTextCommand extends BasicCommand {
    texts = [];
    run(message) {
       message.author = null;

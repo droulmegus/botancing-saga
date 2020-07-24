@@ -1,7 +1,7 @@
-const { Command } = require('discord.js-commando');
+const BasicCommand = require('./BasicCommand');
 const settings = require('../../../settings.json');
 
-module.exports = class BasicImageCommand extends Command {
+module.exports = class BasicImageCommand extends BasicCommand {
    files = [];
    run(message) {
       message.author = null;
