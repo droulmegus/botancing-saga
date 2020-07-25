@@ -3,6 +3,7 @@ const { Command } = require('discord.js-commando');
 const BasicCommand = require('../BasicCommand');
 const settings = require('../../../../settings.json');
 const mysql = require('../../utilities/mysql');
+const { sanitizeMessageContent } = require('../../utilities/formatters');
 
 module.exports = class NewsCommand extends BasicCommand {
    constructor(client) {
@@ -62,13 +63,22 @@ module.exports = class NewsCommand extends BasicCommand {
             (await this.client.channels.fetch(channelId, false));
          if (newsChannel && newsChannel.messages) {
             newsChannel.messages.fetch({ limit: 1 }).then((messages) => {
-               messages != null &&
-                  messages.each((msg) => {
-                     message.reply(msg.content);
-                  });
+               const effectiveMessages = messages
+                  ? messages
+                       .map((msg) => {
+                          return sanitizeMessageContent(msg);
+                       })
+                       .filter((content) => content && content.length > 0)
+                  : [];
+
+               if (effectiveMessages != null && effectiveMessages.length > 0) {
+                  message.reply(effectiveMessages[0]);
+               } else {
+                  throw new Error('Pas de message récent valide.');
+               }
             });
          } else {
-            throw new Error('No Messages or no channel');
+            throw new Error('Pas de message ou de channel.');
          }
       } catch (err) {
          console.error(err);
