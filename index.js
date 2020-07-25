@@ -14,12 +14,12 @@ client.registry
    // Registers your custom command groups
    .registerGroups([
       ['aides', 'Aides pour le jeu'],
+      ['equipements', 'Equipements'],
       [
-         'equipements',
-         'Equipements',
+         'misc',
+         'Commandes diverse',
       ] /*
-      ['styles', 'Commandes concernant les styles de personnages'],
-      ['misc', 'Commandes diverse'],*/,
+      ['styles', 'Commandes concernant les styles de personnages'],,*/,
    ])
    // Registers all built-in groups, commands, and argument types
    .registerDefaultTypes()
