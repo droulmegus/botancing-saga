@@ -1,12 +1,11 @@
 const mysql = require('mysql');
 const settings = require('../../../settings.json');
 
-const connection = mysql.createConnection({
-   ...settings.mySql,
-});
-
 module.exports = {
    query: (callback, onErr, onCatch) => {
+      const connection = mysql.createConnection({
+         ...settings.mySql,
+      });
       try {
          connection.connect(onErr);
          callback(connection);

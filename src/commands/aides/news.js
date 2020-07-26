@@ -1,10 +1,14 @@
-const { Command } = require('discord.js-commando');
+const { Permissions } = require('discord.js');
 
 const BasicCommand = require('../BasicCommand');
 const settings = require('../../../../settings.json');
-const mysql = require('../../utilities/mysql');
-const { sanitizeMessageContent } = require('../../utilities/formatters');
+const {
+   mysql,
+   sanitizeMessageContent,
+   checkPermissions,
+} = require('../../utilities');
 
+const settingName = 'NewsChannel';
 module.exports = class NewsCommand extends BasicCommand {
    constructor(client) {
       super(client, {
@@ -15,10 +19,10 @@ module.exports = class NewsCommand extends BasicCommand {
          description: 'Dernières nouvelles',
          args: [
             {
-               key: 'canal',
+               key: 'channel',
                prompt: 'Canal contenant les dernières nouvelles',
-               type: 'string',
-               default: '',
+               type: 'channel',
+               default: false,
             },
          ],
          guildOnly: true,
@@ -29,7 +33,8 @@ module.exports = class NewsCommand extends BasicCommand {
       mysql.query(
          (connection) => {
             connection.query(
-               "SELECT Value FROM Settings WHERE Name = 'NewsChannel'",
+               'SELECT Value FROM Settings WHERE Name = ?',
+               [settingName],
                function (err, result) {
                   if (err) {
                      console.error(err);
@@ -51,8 +56,28 @@ module.exports = class NewsCommand extends BasicCommand {
       );
    }
 
-   setChannel() {
-      //if(check si utilisatur a le droit de créer un channel)
+   setChannel(channel, cb) {
+      mysql.query(
+         (connection) => {
+            connection.query(
+               'UPDATE Settings SET Value = ? WHERE Name = ?',
+               [channel.id, settingName],
+               function (err) {
+                  if (err) {
+                     console.error(err);
+                     throw err;
+                  }
+                  cb(true);
+               }
+            );
+         },
+         (err) => {
+            if (err) {
+               console.error(err);
+               cb(false);
+            }
+         }
+      );
    }
 
    async getNews(channelId, message) {
@@ -88,11 +113,21 @@ module.exports = class NewsCommand extends BasicCommand {
       }
    }
 
-   run(message, { canal }) {
-      message.author = null;
-      if (canal && canal.length > 0) {
-         this.setChannel(canal);
+   run(message, { channel }) {
+      if (channel) {
+         if (checkPermissions([Permissions.FLAGS.ADMINISTRATOR], message)) {
+            message.author = null;
+            this.setChannel(channel, (done) => {
+               message.reply(
+                  done ? 'Canal mis à jour' : 'Canal non mis à jour'
+               );
+            });
+         } else {
+            message.author = null;
+            message.reply('Seul un administrateur peut changer le canal.');
+         }
       } else {
+         message.author = null;
          this.getChannelId((id) => this.getNews(id, message));
       }
    }
