@@ -1,6 +1,6 @@
 const { owner } = require('../../../settings.json');
 
-async function checkPermissions(message, permissions) {
+async function checkPermissionsAsync(permissions, message) {
    if (!permissions || !permissions.length) {
       return true;
    }
@@ -9,10 +9,12 @@ async function checkPermissions(message, permissions) {
       return false;
    }
 
-   return (
-      message.author.id == owner ||
-      (member && member.permissions && member.permissions.any(permissions))
-   );
+   if (message.author.id === owner) {
+      return true;
+   }
+
+   const member = await message.guild.members.fetch(message.author.id);
+   return member && member.permissions && member.permissions.any(permissions);
 }
 
-module.exports = { checkPermissions };
+module.exports = { checkPermissionsAsync };

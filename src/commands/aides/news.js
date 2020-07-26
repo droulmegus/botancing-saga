@@ -5,7 +5,7 @@ const settings = require('../../../../settings.json');
 const {
    mysql,
    sanitizeMessageContent,
-   checkPermissions,
+   checkPermissionsAsync,
 } = require('../../utilities');
 
 const settingName = 'NewsChannel';
@@ -115,17 +115,23 @@ module.exports = class NewsCommand extends BasicCommand {
 
    run(message, { channel }) {
       if (channel) {
-         if (checkPermissions([Permissions.FLAGS.ADMINISTRATOR], message)) {
-            message.author = null;
-            this.setChannel(channel, (done) => {
-               message.reply(
-                  done ? 'Canal mis à jour' : 'Canal non mis à jour'
-               );
-            });
-         } else {
-            message.author = null;
-            message.reply('Seul un administrateur peut changer le canal.');
-         }
+         checkPermissionsAsync([Permissions.FLAGS.ADMINISTRATOR], message).then(
+            (authorized) => {
+               if (authorized) {
+                  message.author = null;
+                  this.setChannel(channel, (done) => {
+                     message.reply(
+                        done ? 'Canal mis à jour' : 'Canal non mis à jour'
+                     );
+                  });
+               } else {
+                  message.author = null;
+                  message.reply(
+                     'Seul un administrateur peut changer le canal.'
+                  );
+               }
+            }
+         );
       } else {
          message.author = null;
          this.getChannelId((id) => this.getNews(id, message));
