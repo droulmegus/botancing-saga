@@ -22,8 +22,8 @@ module.exports = class ClearCommand extends BasicCommand {
          args: [
             {
                key: 'nombre',
-               error: getErrorInteger('nombre', 1),
-               prompt: getPromptInteger('nombre', 1),
+               error: getErrorInteger('nombre', 1, upperLim),
+               prompt: getPromptInteger('nombre', 1, upperLim),
                type: 'integer',
                default: 1,
                wait: 10,
