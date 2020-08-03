@@ -35,4 +35,7 @@ client.registry
 client.once('ready', () => {
    console.log('Ready!');
 });
+
+client.on('guildMemberAdd', require('./src/events/guildMemberAdd'));
+
 client.login(settings.token);
