@@ -27,6 +27,7 @@ module.exports = class ClearCommand extends BasicCommand {
                type: 'integer',
                default: 1,
                wait: 10,
+               max: upperLim,
                min: 1,
             },
          ],
