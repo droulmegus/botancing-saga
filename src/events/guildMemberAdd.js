@@ -1,9 +1,9 @@
 module.exports = (member) => {
    const colorChan = member.guild.channels.cache.find(
-      (ch) => ch.name === '725404704607043702'
+      (ch) => ch.id === '725404704607043702'
    );
    const rsChan = member.guild.channels.cache.find(
-      (ch) => ch.name === '725013419861868604'
+      (ch) => ch.id === '725013419861868604'
    );
    const pullChan = member.guild.channels.cache.find(
       (ch) => ch.id === '725013419861868604'
