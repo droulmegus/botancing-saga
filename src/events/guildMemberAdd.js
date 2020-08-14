@@ -3,7 +3,7 @@ module.exports = (member) => {
       (ch) => ch.id === '725404704607043702'
    );
    const rsChan = member.guild.channels.cache.find(
-      (ch) => ch.id === '725013419861868604'
+      (ch) => ch.id === '725012440709988417'
    );
    const pullChan = member.guild.channels.cache.find(
       (ch) => ch.id === '725013419861868604'
@@ -35,6 +35,8 @@ module.exports = (member) => {
  - ${teamChan} : Tu veux faire du théorie crafting ou tu as une question sur qui choisir pour un défi spécifique? N'hésites pas à poser ta question ici!
  - ${autresChan} : Un nom très explicite :)
  - ${blablaChan} : Pour parler de tout et de rien.
+
+ Si tu débutes dans le jeu, tu peux lire le guide fourni par Presti : https://docs.google.com/presentation/d/1ZL7XbRqNyBoQQ5GfKPk9ccEggcXL7xSCt629GFoA69k/edit#slide=id.p
  
  J'ai aussi d'autres commandes! N'hésites pas à taper \`-help\` pour en savoir plus.
  `);
