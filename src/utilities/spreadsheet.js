@@ -40,13 +40,17 @@ function authorize(callback) {
       client_secret,
       redirect_uris[0]
    );
+   const token = require(TOKEN_PATH);
+   oAuth2Client.setCredentials(token);
+   callback(oAuth2Client);
+   /*
    if (fs.existsSync(TOKEN_PATH)) {
       const token = require(TOKEN_PATH);
       oAuth2Client.setCredentials(token);
       callback(oAuth2Client);
    } else {
       getNewToken(oAuth2Client, callback);
-   }
+   }*/
 }
 
 module.exports = {
