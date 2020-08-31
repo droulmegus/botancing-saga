@@ -15,11 +15,8 @@ client.registry
    .registerGroups([
       ['aides', 'Aides pour le jeu'],
       ['equipements', 'Equipements'],
-      [
-         'misc',
-         'Commandes diverse',
-      ] /*
-      ['styles', 'Commandes concernant les styles de personnages'],,*/,
+      ['misc', 'Commandes diverse'],
+      ['styles', 'Commandes concernant les styles de personnages'],
    ])
    // Registers all built-in groups, commands, and argument types
    .registerDefaultTypes()
@@ -34,6 +31,10 @@ client.registry
    .registerCommandsIn(path.join(__dirname, 'src/commands'));
 client.once('ready', () => {
    console.log('Ready!');
+   console.log(`Currently handling :`);
+   client.guilds.cache.each((g) => {
+      console.log(g.name);
+   });
 });
 
 client.on('guildMemberAdd', require('./src/events/guildMemberAdd'));
