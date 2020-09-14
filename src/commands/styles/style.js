@@ -34,11 +34,6 @@ module.exports = class StylesCommand extends BasicCommand {
          return;
       }
 
-      if (style.length < 5) {
-         message.reply('Réessayez en saissant plus de 5 caractères');
-         return;
-      }
-
       getStylesByName(style, async (styles) => {
          switch (styles.length) {
             case 0:

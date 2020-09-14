@@ -4,8 +4,6 @@ const {
    getStylesByCharacterName,
 } = require('../../utilities/spreadsheet.styles');
 
-const max = 3;
-
 module.exports = class StylesCommand extends BasicCommand {
    constructor(client) {
       super(client, {
@@ -35,12 +33,6 @@ module.exports = class StylesCommand extends BasicCommand {
          );
          return;
       }
-
-      if (perso.length < 5) {
-         message.reply('Réessayez en saissant plus de 5 caractères');
-         return;
-      }
-
       getStylesByCharacterName(perso, async (styles) => {
          switch (styles.length) {
             case 0:
