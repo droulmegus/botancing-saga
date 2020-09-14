@@ -125,10 +125,19 @@ function getStylesByName(styleName, callback, config) {
    getAllStyles((styles) => {
       styles
          ? callback(
-              styles.filter(
-                 (style) =>
-                    style.style && style.style.toLowerCase().indexOf(sname) > -1
-              )
+              styles
+                 .filter(
+                    (style) =>
+                       style.style &&
+                       style.style.toLowerCase().indexOf(sname) > -1
+                 )
+                 .sort((a, b) =>
+                    a.name.length === b.name.length
+                       ? a.name === b.name
+                          ? a.style.localeCompare(b.style)
+                          : a.name.localeCompare(b.name)
+                       : a.name.length - b.name.length
+                 )
            )
          : callback([]);
    }, config);
@@ -139,10 +148,19 @@ function getStylesByCharacterName(charName, callback, config) {
    getAllStyles((styles) => {
       styles
          ? callback(
-              styles.filter(
-                 (style) =>
-                    style.name && style.name.toLowerCase().indexOf(cname) > -1
-              )
+              styles
+                 .filter(
+                    (style) =>
+                       style.name &&
+                       style.name.toLowerCase().indexOf(cname) > -1
+                 )
+                 .sort((a, b) =>
+                    a.name.length === b.name.length
+                       ? a.name === b.name
+                          ? a.style.localeCompare(b.style)
+                          : a.name.localeCompare(b.name)
+                       : a.name.length - b.name.length
+                 )
            )
          : callback([]);
    }, config);

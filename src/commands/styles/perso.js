@@ -33,6 +33,12 @@ module.exports = class StylesCommand extends BasicCommand {
          );
          return;
       }
+
+      if (perso.length < 2) {
+         message.reply('Réessayez en saissant 2 caractères ou plus.');
+         return;
+      }
+
       getStylesByCharacterName(perso, async (styles) => {
          switch (styles.length) {
             case 0:
