@@ -26,6 +26,7 @@ module.exports = class GuideDebutantCommand extends BasicCommand {
    }
 
    run(message) {
+      message.author = null;
       message.reply(embed);
    }
 };
