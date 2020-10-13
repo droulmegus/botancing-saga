@@ -33,7 +33,7 @@ function getNewToken(oAuth2Client, cb) {
    });
 }
 
-function authorize(callback) {
+function authorize() {
    const { client_secret, client_id, redirect_uris } = credentials.installed;
    const oAuth2Client = new google.auth.OAuth2(
       client_id,
@@ -42,7 +42,7 @@ function authorize(callback) {
    );
    const token = require(TOKEN_PATH);
    oAuth2Client.setCredentials(token);
-   callback(oAuth2Client);
+   return oAuth2Client;
    /*
    if (fs.existsSync(TOKEN_PATH)) {
       const token = require(TOKEN_PATH);

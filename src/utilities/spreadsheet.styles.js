@@ -1,20 +1,26 @@
 const { authorize } = require('./spreadsheet');
 const { MessageEmbed } = require('discord.js');
 const { google } = require('googleapis');
+const { loadCharacterFile, saveCharacters } = require('./characters.file');
 
 const nameRegex = /(.*) \("{0,1}(.*)"{0,1}\)/;
 
-function getAllStyles(
-   callback,
-   {
-      startRow = 7,
-      startCol = 0,
-      numberRows = 994,
-      roles = ['Fighter', 'Mage', 'Defender', 'Jammer', 'Support'],
-      categories = ['Award/UDX', 'Seasonal', 'Common'],
-   } = {}
-) {
-   authorize((auth) => {
+function getAllStyles({
+   startRow = 7,
+   startCol = 0,
+   numberRows = 994,
+   roles = ['Fighter', 'Mage', 'Defender', 'Jammer', 'Support'],
+   categories = ['Award/UDX', 'Seasonal', 'Common'],
+} = {}) {
+   const cacheCharacters = loadCharacterFile();
+   if (
+      !cacheCharacters ||
+      cacheCharacters.isError ||
+      cacheCharacters.data.length === 0 ||
+      cacheCharacters.outdated
+   ) {
+      const auth = authorize();
+
       const length = 13;
       const firstCol = String.fromCharCode(startCol + 65);
       let lastIndex = startCol + length * categories.length - 2;
@@ -40,130 +46,170 @@ function getAllStyles(
          };
       };
       const sheets = google.sheets({ version: 'v4', auth });
-      Promise.all(
-         roles.map(async (role) => {
-            const request = getRequest(role);
-            const response = (await sheets.spreadsheets.values.get(request))
-               .data;
-            if (!response || !response.values) {
-               return [];
-            }
-            const values = response.values;
-            let result = [];
 
-            categories.forEach((cat, colIndex) => {
-               let row = 0,
-                  col = colIndex * length;
-               while (
-                  values[row] &&
-                  values[row][col] &&
-                  values[row][col].length > 0
-               ) {
-                  const nameMatch = nameRegex.exec(values[row][col].trim());
-                  result.push({
-                     role: role,
-                     category: cat,
-                     name: nameMatch[1],
-                     style: nameMatch[2] && nameMatch[2].replace('"', ''),
-                     stats: {
-                        str: values[row + 1][col + 3],
-                        end: values[row + 2][col + 3],
-                        dex: values[row + 3][col + 3],
-                        agi: values[row + 4][col + 3],
-                        wil: values[row + 5][col + 3],
-                        lov: values[row + 6][col + 3],
-                        cha: values[row + 7][col + 3],
-                     },
-                     abilities: [
-                        {
-                           name: values[row + 1][col + 4].trim(),
-                           desc: values[row + 1][col + 5].trim(),
-                        },
-                        {
-                           name: values[row + 3][col + 4].trim(),
-                           desc: values[row + 3][col + 5].trim(),
-                        },
-                        {
-                           name: values[row + 5][col + 4].trim(),
-                           desc: values[row + 5][col + 5].trim(),
-                        },
-                     ],
-                     skills: [
-                        {
-                           name: values[row + 1][col + 8].trim(),
-                           desc: values[row + 1][col + 9]
-                              .trim()
-                              .replace('||', '-'),
-                        },
-                        {
-                           name: values[row + 3][col + 8].trim(),
-                           desc: values[row + 3][col + 9]
-                              .trim()
-                              .replace('||', '-'),
-                        },
-                        {
-                           name: values[row + 5][col + 8].trim(),
-                           desc: values[row + 5][col + 9]
-                              .trim()
-                              .replace('||', '-'),
-                        },
-                     ],
-                     desc: values[row + 10][col].trim(),
-                     tips: values[row + 10][col + 6].trim(),
+      return [
+         Promise.all(
+            roles.map(async (role) => {
+               try {
+                  const request = getRequest(role);
+                  const response = (
+                     await sheets.spreadsheets.values.get(request)
+                  ).data;
+                  if (!response || !response.values) {
+                     return [];
+                  }
+                  const values = response.values;
+                  let result = [];
+
+                  categories.forEach((cat, colIndex) => {
+                     let row = 0,
+                        col = colIndex * length;
+                     while (
+                        values[row] &&
+                        values[row][col] &&
+                        values[row][col].length > 0
+                     ) {
+                        const nameMatch = nameRegex.exec(
+                           values[row][col].trim()
+                        );
+                        result.push({
+                           role: role,
+                           category: cat,
+                           name: nameMatch[1],
+                           style: nameMatch[2] && nameMatch[2].replace('"', ''),
+                           stats: {
+                              str: values[row + 1][col + 3],
+                              end: values[row + 2][col + 3],
+                              dex: values[row + 3][col + 3],
+                              agi: values[row + 4][col + 3],
+                              wil: values[row + 5][col + 3],
+                              lov: values[row + 6][col + 3],
+                              cha: values[row + 7][col + 3],
+                           },
+                           abilities: [
+                              {
+                                 name: values[row + 1][col + 4].trim(),
+                                 desc: values[row + 1][col + 5].trim(),
+                              },
+                              {
+                                 name: values[row + 3][col + 4].trim(),
+                                 desc: values[row + 3][col + 5].trim(),
+                              },
+                              {
+                                 name: values[row + 5][col + 4].trim(),
+                                 desc: values[row + 5][col + 5].trim(),
+                              },
+                           ],
+                           skills: [
+                              {
+                                 name: values[row + 1][col + 8].trim(),
+                                 desc: values[row + 1][col + 9]
+                                    .trim()
+                                    .replace('||', '-'),
+                              },
+                              {
+                                 name: values[row + 3][col + 8].trim(),
+                                 desc: values[row + 3][col + 9]
+                                    .trim()
+                                    .replace('||', '-'),
+                              },
+                              {
+                                 name: values[row + 5][col + 8].trim(),
+                                 desc: values[row + 5][col + 9]
+                                    .trim()
+                                    .replace('||', '-'),
+                              },
+                           ],
+                           desc: values[row + 10][col].trim(),
+                           tips: values[row + 10][col + 6].trim(),
+                        });
+                        row += 18;
+                     }
                   });
-                  row += 18;
+                  return [result];
+               } catch (e) {
+                  console.error(e);
+                  return [cacheCharacters && cacheCharacters.data, true];
                }
+            })
+         ).then((results) => {
+            let invalid = false;
+            const data = [];
+            results.forEach(([d, e]) => {
+               invalid = invalid || e;
+               data.push(d);
             });
-            return result;
-         })
-      ).then((results) => callback(results.flat()));
-   });
+            !invalid && saveCharacters(data.flat());
+            return [data.flat(), invalid];
+         }),
+         cacheCharacters && cacheCharacters.outdated,
+         cacheCharacters && cacheCharacters.isError,
+      ];
+   } else {
+      return [
+         new Promise((r) => {
+            r([cacheCharacters.data]);
+         }),
+         false,
+         false,
+      ];
+   }
 }
 
 function getStylesByName(styleName, callback, config) {
    const sname = styleName && styleName.toLowerCase();
-   getAllStyles((styles) => {
-      styles
-         ? callback(
-              styles
-                 .filter(
-                    (style) =>
-                       style.style &&
-                       style.style.toLowerCase().indexOf(sname) > -1
-                 )
-                 .sort((a, b) =>
-                    a.name.length === b.name.length
-                       ? a.name === b.name
-                          ? a.style.localeCompare(b.style)
-                          : a.name.localeCompare(b.name)
-                       : a.name.length - b.name.length
-                 )
-           )
-         : callback([]);
-   }, config);
+   const [promise, ...rest] = getAllStyles(config);
+   return [
+      promise.then(([styles, invalid]) => {
+         styles
+            ? callback(
+                 styles
+                    .filter(
+                       (style) =>
+                          style.style &&
+                          style.style.toLowerCase().indexOf(sname) > -1
+                    )
+                    .sort((a, b) =>
+                       a.name.length === b.name.length
+                          ? a.name === b.name
+                             ? a.style.localeCompare(b.style)
+                             : a.name.localeCompare(b.name)
+                          : a.name.length - b.name.length
+                    ),
+                 invalid
+              )
+            : callback([], invalid);
+      }),
+      ...rest,
+   ];
 }
 
 function getStylesByCharacterName(charName, callback, config) {
    const cname = charName && charName.toLowerCase();
-   getAllStyles((styles) => {
-      styles
-         ? callback(
-              styles
-                 .filter(
-                    (style) =>
-                       style.name &&
-                       style.name.toLowerCase().indexOf(cname) > -1
-                 )
-                 .sort((a, b) =>
-                    a.name.length === b.name.length
-                       ? a.name === b.name
-                          ? a.style.localeCompare(b.style)
-                          : a.name.localeCompare(b.name)
-                       : a.name.length - b.name.length
-                 )
-           )
-         : callback([]);
-   }, config);
+   const [promise, ...rest] = getAllStyles(config);
+   return [
+      promise.then(([styles, invalid]) => {
+         styles
+            ? callback(
+                 styles
+                    .filter(
+                       (style) =>
+                          style.name &&
+                          style.name.toLowerCase().indexOf(cname) > -1
+                    )
+                    .sort((a, b) =>
+                       a.name.length === b.name.length
+                          ? a.name === b.name
+                             ? a.style.localeCompare(b.style)
+                             : a.name.localeCompare(b.name)
+                          : a.name.length - b.name.length
+                    ),
+                 invalid
+              )
+            : callback([], invalid);
+      }),
+      ...rest,
+   ];
 }
 
 const roleColors = {
