@@ -48,6 +48,7 @@ function saveCharacters(data) {
       usingFile = true;
       return fs.writeFileSync(fileName, JSON.stringify(data)) == null;
    } catch (e) {
+      console.error(e);
       return false;
    } finally {
       usingFile = false;
