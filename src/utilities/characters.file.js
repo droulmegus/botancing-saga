@@ -20,24 +20,9 @@ function isFileOutdated() {
 }
 
 function loadCharacterFile() {
-   if (!fs.existsSync(fileName) || usingFile) {
-      return null;
-   }
-   usingFile = true;
-   try {
-      return {
-         data: JSON.parse(fs.readFileSync(fileName)),
-         outdated: isFileOutdated(),
-      };
-   } catch (e) {
-      console.error(e);
-      return {
-         data: [],
-         isError: true,
-      };
-   } finally {
-      usingFile = false;
-   }
+   return new Promise((r) => {
+      return r(null);
+   });
 }
 
 function saveCharacters(data) {
