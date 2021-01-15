@@ -10,8 +10,8 @@ function getAllStyles(
    {
       startRow = 7,
       startCol = 0,
-      numberRows = 1000,
-      roles = ['FIG', 'MAG', 'DEF', 'JAM', 'SUP', 'GL'],
+      numberRows = 2000,
+      roles = ['FIG', 'MAG', 'DEF', 'JAM', 'SUP' /*, 'GL'*/],
       categories = ['Award/UDX', 'Seasonal', 'Common'],
    } = {}
 ) {
@@ -63,7 +63,6 @@ function getAllStyles(
                      }
                      const values = response.values;
                      let result = [];
-
                      categories.forEach((cat, colIndex) => {
                         let row = 0,
                            col = colIndex * length;
@@ -177,7 +176,7 @@ function getAllStyles(
 
                               result.push(r);
                            }
-                           row += 18;
+                           row += 19;
                         }
                      });
                      return [result];
