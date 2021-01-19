@@ -85,6 +85,7 @@ function getAllStyles(
                                     col
                                  )
                               );
+                              row += 18;
                            } else {
                               const nameMatch = nameRegex.exec(
                                  values[row][col].trim()
