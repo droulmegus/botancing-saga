@@ -176,8 +176,8 @@ function getAllStyles(
                               }
 
                               result.push(r);
+                              row += 19;
                            }
-                           row += 19;
                         }
                      });
                      return [result];
