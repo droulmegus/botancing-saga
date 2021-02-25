@@ -38,11 +38,11 @@ function getAllStyles(
          }
          lastCol += String.fromCharCode(65 + lastIndex);
 
-         const getRequest = (sheetName, row = startRow) => {
+         const getRequest = (sheetName) => {
             return {
                spreadsheetId: '1AUquzPB0vDKYxOHC1uU4G7CNrNSNwLr89MOTWjQBNu0',
                range: `${sheetName}!${firstCol}${startRow}:${lastCol}${
-                  numberRows + row
+                  numberRows + startRow
                }`,
 
                auth,
@@ -64,11 +64,11 @@ function getAllStyles(
                      const values = response.values;
                      let result = [];
                      categories.forEach((cat, colIndex) => {
-                        let row =
-                              values[0][0].indexOf('Award/UDX Category') > -1
-                                 ? 0
-                                 : 14,
-                           col = colIndex * length;
+                        let col = colIndex * length,
+                           row =
+                              values[9][col].indexOf('Award/UDX Category') > -1
+                                 ? 14
+                                 : 0;
                         while (
                            values[row] &&
                            values[row][col] &&
@@ -198,7 +198,7 @@ function getAllStyles(
                   data.push(d);
                });
                //!invalid && saveCharacters(data.flat());
-               return [data.flat(), invalid];
+               return [data.flat().filter((a) => a != null), invalid];
             }),
             cacheCharacters && cacheCharacters.outdated,
             cacheCharacters && cacheCharacters.isError,
