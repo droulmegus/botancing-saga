@@ -38,11 +38,11 @@ function getAllStyles(
          }
          lastCol += String.fromCharCode(65 + lastIndex);
 
-         const getRequest = (sheetName) => {
+         const getRequest = (sheetName, row = startRow) => {
             return {
                spreadsheetId: '1AUquzPB0vDKYxOHC1uU4G7CNrNSNwLr89MOTWjQBNu0',
                range: `${sheetName}!${firstCol}${startRow}:${lastCol}${
-                  numberRows + startRow
+                  numberRows + row
                }`,
 
                auth,
@@ -64,7 +64,10 @@ function getAllStyles(
                      const values = response.values;
                      let result = [];
                      categories.forEach((cat, colIndex) => {
-                        let row = 0,
+                        let row =
+                              values[0][0].indexOf('Award/UDX Category') > -1
+                                 ? 0
+                                 : 14,
                            col = colIndex * length;
                         while (
                            values[row] &&
@@ -102,9 +105,10 @@ function getAllStyles(
                                     end: values[row + 2][col + 3],
                                     dex: values[row + 3][col + 3],
                                     agi: values[row + 4][col + 3],
-                                    wil: values[row + 5][col + 3],
-                                    lov: values[row + 6][col + 3],
-                                    cha: values[row + 7][col + 3],
+                                    int: values[row + 5][col + 3],
+                                    wil: values[row + 6][col + 3],
+                                    lov: values[row + 7][col + 3],
+                                    cha: values[row + 8][col + 3],
                                  },
                                  abilities: [
                                     {
@@ -223,9 +227,10 @@ function oldHandling(role, cat, nameMatch, values, row, col) {
          end: values[row + 2][col + 3],
          dex: values[row + 3][col + 3],
          agi: values[row + 4][col + 3],
-         wil: values[row + 5][col + 3],
-         lov: values[row + 6][col + 3],
-         cha: values[row + 7][col + 3],
+         int: values[row + 5][col + 3],
+         wil: values[row + 6][col + 3],
+         lov: values[row + 7][col + 3],
+         cha: values[row + 8][col + 3],
       },
       abilities: [
          {
@@ -415,6 +420,11 @@ const oldFormatStyleToEmbed = (st) => {
             inline: true,
          },
          {
+            name: 'INT',
+            value: st.stats.int,
+            inline: true,
+         },
+         {
             name: 'WIL',
             value: st.stats.wil,
             inline: true,
@@ -520,6 +530,11 @@ const formatStyleToEmbed = (st) => {
          {
             name: 'AGI',
             value: st.stats.agi,
+            inline: true,
+         },
+         {
+            name: 'INT',
+            value: st.stats.int,
             inline: true,
          },
          {
